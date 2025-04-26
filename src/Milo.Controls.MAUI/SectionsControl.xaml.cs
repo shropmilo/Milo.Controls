@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace Milo.Controls;
+namespace Milo.Controls.MAUI;
 
 public partial class SectionsControl : ContentView
 {
