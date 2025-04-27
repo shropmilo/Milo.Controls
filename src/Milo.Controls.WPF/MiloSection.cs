@@ -6,7 +6,7 @@ namespace Milo.Controls.WPF
     /// <summary>
     /// 
     /// </summary>
-    public class MiloSection : Control
+    public class MiloSection : HeaderedContentControl
     {
         static MiloSection()
         {

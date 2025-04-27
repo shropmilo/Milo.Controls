@@ -3,16 +3,29 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Milo.Controls.WPF">
 
-
     <Style TargetType="{x:Type local:MiloSection}">
+        <Setter Property="HeaderTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <local:MiloHeader Content="{TemplateBinding Header}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:MiloSection}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-
-                        <TextBlock>SECTION</TextBlock>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <ContentPresenter Grid.Row="0" Content="{TemplateBinding Header}" 
+                                              ContentTemplate="{TemplateBinding HeaderTemplate}"/>
+                            <ContentPresenter Grid.Row="1" Content="{TemplateBinding Content}"/>
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -27,8 +40,14 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
 
-                        <TextBlock>HEADER</TextBlock>
+                        <ContentPresenter Content="{TemplateBinding Content}"/>
                     </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HeaderType" Value="Title">
+                            <Setter Property="TextElement.FontSize" Value="18"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -41,8 +60,60 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Background="White" IsEnabled="True" Name="SpinnerParent">
+                                <Viewbox Height="30" Width="30" Stretch="Fill">
+                                    <Path Stretch="Fill" Stroke="Black" StrokeThickness="8" Fill="Transparent" 
+                                          Data="M 50,10 A 40,40 0 1 1 90.45,29.55" RenderTransformOrigin="0.5,0.5">
+                                        <Path.RenderTransform>
+                                            <RotateTransform/>
+                                        </Path.RenderTransform>
+                                        <Path.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ElementName=SpinnerParent, Path=IsEnabled}" Value="True">
+                                                        <DataTrigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" 
+                                                                        From="0" To="360" Duration="0:0:1"        
+                                                                        RepeatBehavior="Forever" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </DataTrigger.EnterActions>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                    </Path>
+                                </Viewbox>
+                            </Grid>
+                            <ContentPresenter Grid.Column="1" Content="{TemplateBinding Content}"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-                        <TextBlock>SPINNER</TextBlock>
+    <Style TargetType="{x:Type local:MiloListView}">
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type local:MiloListViewItem}">
+
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:MiloListView}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

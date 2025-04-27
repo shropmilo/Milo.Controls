@@ -53,6 +53,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="MiloHeader.cs" />
+    <Compile Include="MiloListView.cs" />
+    <Compile Include="MiloListViewItem.cs" />
     <Compile Include="MiloSection.cs" />
   </ItemGroup>
   <ItemGroup>

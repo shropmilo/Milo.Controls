@@ -6,7 +6,7 @@ namespace Milo.Controls.WPF
     /// <summary>
     ///
     /// </summary>
-    public class MiloSpinner : Control
+    public class MiloSpinner : ContentControl
     {
         static MiloSpinner()
         {
