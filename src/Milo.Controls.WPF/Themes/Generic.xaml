@@ -1,13 +1,200 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Milo.Controls.WPF">
+    xmlns:local="clr-namespace:Milo.Controls.WPF"
+    xmlns:converters="clr-namespace:Milo.Controls.WPF.Converters">
+
+    <LinearGradientBrush x:Key="WizardBarBrush" StartPoint="0.5,0.0" EndPoint="0.5,1.0">
+        <GradientStop Color="#FFE4E4E4" Offset="0.25"/>
+        <GradientStop Color="#FFededed" Offset="0.50"/>
+        <GradientStop Color="#FFFCFCFC" Offset="0.75"/>
+    </LinearGradientBrush>
+
+    <converters:IsLastItemConverter x:Key="IsLastItemConverter"/>
+    <converters:IsProgressedConverter x:Key="IsProgressedConverter"/>
+
+    <Style TargetType="{x:Type local:MiloWizardView}">
+        <Setter Property="TrackProgress" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:MiloWizardView}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            Background="{TemplateBinding Background}" 
+                            Padding="{TemplateBinding Padding}" 
+                            SnapsToDevicePixels="true">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ScrollViewer>
+                                <local:MiloWizardNavigation ItemsSource="{TemplateBinding Tools}" 
+                                               UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+                                    <local:MiloWizardNavigation.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="1"/>
+                                        </ItemsPanelTemplate>
+                                    </local:MiloWizardNavigation.ItemsPanel>
+                                    <local:MiloWizardNavigation.ItemTemplate>
+                                        <DataTemplate>
+                                            <DataTemplate.Resources>
+                                                <Style TargetType="Path" x:Key="OuterPath">
+                                                    <Setter Property="Data" Value="M0.0,0.0 L0.0,0.33 L1.0,0.33 L1.0,0.66 L0.0,0.66 L0.0,1.0"/>
+                                                    <Setter Property="StrokeThickness" Value="0"/>
+                                                    <Setter Property="Height" Value="21"/>
+                                                    <Setter Property="Stretch" Value="Fill"/>
+                                                    <Setter Property="Fill" Value="{StaticResource WizardBarBrush}"/>
+                                                    <Setter Property="StrokeEndLineCap" Value="Square"/>
+                                                    <Setter Property="StrokeStartLineCap" Value="Square"/>
+                                                    <Setter Property="Stroke" Value="Transparent"/>
+                                                </Style>
+                                                <Style TargetType="Path" x:Key="InnerPath" BasedOn="{StaticResource OuterPath}">
+                                                    <Setter Property="Data" Value="M0.0,0.0 L0.0,0.45 L1.0,0.45 L1.0,0.55 L0.0,0.55 L0.0,1.0"/>
+                                                    <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MiloWizardView}},
+                                                                                        Path=ToolProgressBrush}"/>
+                                                </Style>
+                                            </DataTemplate.Resources>
+                                            <Grid UseLayoutRounding="True" MinWidth="60">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.Effect>
+                                                        <DropShadowEffect Color="Black"
+                                                                      BlurRadius="3"
+                                                                      Opacity="0.6"
+                                                                      ShadowDepth="0"/>
+                                                    </Grid.Effect>
+                                                    <Path Name="leftPath"
+                                                      Style="{StaticResource OuterPath}"/>
+                                                    <Path Grid.Column="1"
+                                                      Name="rightPath"
+                                                      Style="{StaticResource OuterPath}"/>
+                                                    <Ellipse Grid.ColumnSpan="2" Grid.Column="0"
+                                                         HorizontalAlignment="Center"
+                                                         Stroke="Transparent"
+                                                         Height="60"
+                                                         Width="60">
+                                                        <Ellipse.Resources>
+                                                            <converters:IsSelectedConverter x:Key="IsSelectedConverter"/>
+                                                        </Ellipse.Resources>
+                                                        <Ellipse.Style>
+                                                            <Style TargetType="Ellipse">
+                                                                <Setter Property="Fill" Value="{StaticResource WizardBarBrush}"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Value="True">
+                                                                        <DataTrigger.Binding>
+                                                                            <MultiBinding Converter="{StaticResource IsSelectedConverter}">
+                                                                                <Binding RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                                                <Binding RelativeSource="{RelativeSource AncestorType={x:Type local:MiloWizardView}}"
+                                                                                Path="SelectedTool"/>
+                                                                            </MultiBinding>
+                                                                        </DataTrigger.Binding>
+                                                                        <Setter Property="Fill" Value="{Binding SelectedToolBrush ,RelativeSource={RelativeSource AncestorType={x:Type local:MiloWizardView}}}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Ellipse.Style>
+                                                    </Ellipse>
+                                                    <Ellipse Grid.ColumnSpan="2" Grid.Column="0"
+                                                         HorizontalAlignment="Center"
+                                                         Stroke="Transparent"
+                                                         Height="28"
+                                                         Width="28"
+                                                         Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MiloWizardView}}, Path=ToolProgressBrush}">
+                                                        <Ellipse.Visibility>
+                                                            <MultiBinding Converter="{StaticResource IsProgressedConverter}">
+                                                                <Binding RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                                <Binding RelativeSource="{RelativeSource AncestorType={x:Type local:MiloWizardView}}"
+                                                                     Path="SelectedTool"/>
+                                                            </MultiBinding>
+                                                        </Ellipse.Visibility>
+                                                    </Ellipse>
+                                                    <Path Name="leftFillPath"
+                                                      Grid.Column="0"
+                                                      Style="{StaticResource InnerPath}">
+                                                        <Path.Visibility>
+                                                            <MultiBinding Converter="{StaticResource IsProgressedConverter}">
+                                                                <Binding RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                                <Binding RelativeSource="{RelativeSource AncestorType={x:Type local:MiloWizardView}}"
+                                                                     Path="SelectedTool"/>
+                                                            </MultiBinding>
+                                                        </Path.Visibility>
+                                                    </Path>
+                                                    <Path Name="rightFillPath" Grid.Column="1"
+                                                      Style="{StaticResource InnerPath}">
+                                                        <Path.Visibility>
+                                                            <MultiBinding Converter="{StaticResource IsProgressedConverter}">
+                                                                <Binding RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                                <Binding RelativeSource="{RelativeSource AncestorType={x:Type local:MiloWizardView}}"
+                                                                     Path="SelectedTool"/>
+                                                            </MultiBinding>
+                                                        </Path.Visibility>
+                                                    </Path>
+                                                </Grid>
+
+                                                <TextBlock Grid.Row="1" TextWrapping="Wrap"
+                                                       Text="{Binding}" 
+                                                       TextAlignment="Center"
+                                                       HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                            </Grid>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}"
+                                                         Value="{x:Null}">
+                                                    <Setter TargetName="leftPath" Property="Visibility" Value="Collapsed"/>
+                                                    <Setter TargetName="leftFillPath" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource IsLastItemConverter}}"
+                                                         Value="True">
+                                                    <Setter TargetName="rightPath" Property="Visibility" Value="Collapsed"/>
+                                                    <Setter TargetName="rightFillPath" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </local:MiloWizardNavigation.ItemTemplate>
+                                </local:MiloWizardNavigation>
+
+                            </ScrollViewer>
+
+                            <WrapPanel Grid.Column="1" Orientation="Horizontal">
+                                <WrapPanel.Resources>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Green"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="TextElement.FontSize" Value="18"/>
+                                        <Setter Property="TextElement.FontWeight" Value="Bold"/>
+                                        <Setter Property="Margin" Value="15,5"/>
+                                        <Setter Property="Padding" Value="15,5"/>
+                                    </Style>
+                                </WrapPanel.Resources>
+
+                                <Button Command="{Binding BackCommand, RelativeSource={RelativeSource AncestorType={x:Type local:MiloWizardView}}}"
+                                        CommandParameter="{Binding SelectedTool, RelativeSource={RelativeSource AncestorType={x:Type local:MiloWizardView}}}">Back</Button>
+
+                                <Button Command="{Binding NextCommand, RelativeSource={RelativeSource AncestorType={x:Type local:MiloWizardView}}}"
+                                        CommandParameter="{Binding SelectedTool, RelativeSource={RelativeSource AncestorType={x:Type local:MiloWizardView}}}">Next</Button>
+                            </WrapPanel>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="{x:Type local:MiloSection}">
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="HeaderTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <local:MiloHeader Content="{TemplateBinding Header}"/>
+                    <local:MiloHeader Content="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type local:MiloSection}}}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -24,7 +211,12 @@
                             </Grid.RowDefinitions>
                             <ContentPresenter Grid.Row="0" Content="{TemplateBinding Header}" 
                                               ContentTemplate="{TemplateBinding HeaderTemplate}"/>
-                            <ContentPresenter Grid.Row="1" Content="{TemplateBinding Content}"/>
+
+                            <ScrollViewer Grid.Row="1">
+                                <ContentPresenter  Content="{TemplateBinding Content}"
+                                                   ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                            </ScrollViewer>
+
                         </Grid>
                     </Border>
                 </ControlTemplate>
@@ -40,7 +232,35 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
 
-                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Optional Image -->
+                            <Image Grid.Row="0" Grid.Column="0" x:Name="Image" Source="{TemplateBinding ImageSource}"/>
+
+                            <!-- Main Content -->
+                            <ContentPresenter Grid.Row="0" Grid.Column="1" x:Name="ContentPresenter"
+                                              ContentSource="Content"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"
+                                              TextElement.FontSize="{TemplateBinding FontSize}"
+                                              TextElement.FontFamily="{TemplateBinding FontFamily}"/>
+                            <!-- Bottom line -->
+                            <Border Grid.Row="1" 
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    BorderThickness="2"
+                                    BorderBrush="{TemplateBinding BorderBrush}"/>
+                        </Grid>
+
                     </Border>
 
                     <ControlTemplate.Triggers>

@@ -52,6 +52,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Commands\MiloVisualCommand.cs" />
+    <Compile Include="Converters\IsLastItemConverter.cs" />
+    <Compile Include="Converters\IsProgressedConverter.cs" />
+    <Compile Include="Converters\IsSelectedConverter.cs" />
     <Compile Include="MiloHeader.cs" />
     <Compile Include="MiloListView.cs" />
     <Compile Include="MiloListViewItem.cs" />
@@ -59,6 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MiloSpinner.cs" />
+    <Compile Include="MiloWizardItem.cs" />
+    <Compile Include="MiloWizardNavigation.cs" />
+    <Compile Include="MiloWizardView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -81,5 +89,12 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Milo.Core\src\Milo.Core\Milo.Core.csproj">
+      <Project>{008f5d96-4bf2-0663-e2c6-ed420224a51e}</Project>
+      <Name>Milo.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

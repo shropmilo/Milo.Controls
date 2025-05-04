@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Milo.Controls.WPF
 {
@@ -17,6 +18,15 @@ namespace Milo.Controls.WPF
     {
         public static readonly DependencyProperty HeaderTypeProperty = DependencyProperty.Register(
             nameof(HeaderType), typeof(MiloHeaderType), typeof(MiloHeader), new PropertyMetadata(default(MiloHeaderType)));
+
+        public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(
+            nameof(ImageSource), typeof(ImageSource), typeof(MiloHeader), new PropertyMetadata(default(ImageSource)));
+
+        public ImageSource ImageSource
+        {
+            get => (ImageSource)GetValue(ImageSourceProperty);
+            set => SetValue(ImageSourceProperty, value);
+        }
 
         public MiloHeaderType HeaderType
         {
